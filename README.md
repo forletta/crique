@@ -66,9 +66,9 @@ crique_push(&cq);
 // chunks. Note: once `crique_pop` has been called the bytes previously
 // returned by `crique_peek` may be overwritten.
 while ((packet = crique_peek(&cq)) != NULL) {
- bar(packet, crique_peek_len(&cq));
- 
- crique_pop(&cq);
+    bar(packet, crique_peek_len(&cq));
+
+    crique_pop(&cq);
 }
 ```
  
