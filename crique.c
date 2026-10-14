@@ -9,7 +9,7 @@ static crique_chunk_t *crique_idx_as_chunk(crique_t const *cq, size_t idx) {
         __builtin_trap();
 #endif /* ifdef CRIQUE_DEBUG_ASSERT */
 
-    return (crique_chunk_t *)&cq->buf[idx];
+    return (crique_chunk_t *)&((uint8_t *)cq->buf)[idx];
 }
 
 static crique_write_chunk_state_t crique_write_chunk_state_maybe_init(crique_t *cq, bool init) {
@@ -99,6 +99,8 @@ bool crique_is_full(crique_t const *cq) {
         // Note: `- 1` because `head == tail` is reserved for empty float state.
         return (cq->head - cq->tail) - 1 < CRIQUE_MIN_CHUNK_SIZE;
     }
+
+    __builtin_unreachable();
 }
 
 crique_write_chunk_state_t crique_write_chunk_state(crique_t *cq) {
@@ -115,6 +117,8 @@ crique_chunk_t *crique_get_write_chunk(crique_t *cq) {
     case CRIQUE_WRITE_CHUNK_STATE_MID:
         return crique_idx_as_chunk(cq, cq->tail);
     }
+
+    __builtin_unreachable();
 }
 
 uint8_t *crique_get_write_ptr(crique_t *cq) {
@@ -179,6 +183,8 @@ size_t crique_write_cap(crique_t *cq) {
         // Note: `- 1` because `head == tail` is reserved for empty float state.
         return (((cq->head - cq->tail)) - 1) - CRIQUE_CHUNK_OVERHEAD - crique_idx_as_chunk(cq, cq->tail)->ctrl;
     }
+
+    __builtin_unreachable();
 }
 
 void crique_written(crique_t *cq, size_t nbytes) {
@@ -237,6 +243,8 @@ void crique_pop(crique_t *cq) {
     case CRIQUE_STATE_FRONT:
         // The crique always expects the front chunk, if avaiable, to be zeroed for it's next writing.
         c->ctrl = 0;
+
+        __attribute__((fallthrough));
     case CRIQUE_STATE_FLOAT:
         cq->head = next_chunk_idx;
 
